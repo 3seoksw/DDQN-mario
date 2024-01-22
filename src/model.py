@@ -1,5 +1,4 @@
 from torch import nn
-import copy
 
 
 class DDQN(nn.Module):
@@ -17,7 +16,6 @@ class DDQN(nn.Module):
         self.target = self.__build_cnn(c, output_dim)
         self.target.load_state_dict(self.online.state_dict())
 
-        # Q_target parameters are frozen.
         for p in self.target.parameters():
             p.requires_grad = False
 

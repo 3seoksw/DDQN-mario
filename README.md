@@ -54,19 +54,19 @@ The $Q$-learning update requires some action $A_t$, state $S_t$, and reward $R_{
 then we can get:
 
 $$
-\begin{align}
+\begin{aligned}
     \theta_{t+1} &= \theta_t + \alpha(Y^{Q}_t - Q(S_t, A_t; \theta_t))
     \nabla_{\theta_t}Q(S_t, A_t; \theta_t)
-\end{align}
+\end{aligned}
 $$
 
 where $\alpha$ is a step size. And the target $Y_t^Q$ is defined as:
 
 $$
-\begin{align}
+\begin{aligned}
     Y_t^Q \equiv R_{t+1} + \gamma \text{max}_aQ(S_{t+1}, a; \theta_t) \\
     Y^Q_t \approx Q(S_t, A_t; \theta_t)
-\end{align}
+\end{aligned}
 $$
 
 However, the target value can cause overestimation. Therefore, DDQN is proposed.
@@ -81,19 +81,19 @@ You can simply think DDQN is separating DQN's target network into two.
 The target is as follows:
 
 $$
-\begin{align}
+\begin{aligned}
     Y_t^{\text{DQN}} \equiv R_{t+1} + \gamma \text{max}_a Q(S_{t+1}, a; \theta_t^{-})
-\end{align}
+\end{aligned}
 $$
 
 where $\theta^{-}$ is a vector parameters of target network. And the Double $Q$-learning error can be written as follows:
 
 $$
-\begin{align}
+\begin{aligned}
     Y_t^{\text{DoubleQ}} \equiv R_{t+1} + \gamma Q_{\text{eval}}^{\text{target}}(S_{t+1},
     \text{argmax}_a Q_{\text{select}}^{\text{online}}(S_{t+1}, a; \theta_t); \theta_t^{-}
 )
-\end{align}
+\end{aligned}
 $$
 
 where $\theta$ is parameterizing online network.

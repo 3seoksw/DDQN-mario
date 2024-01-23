@@ -25,7 +25,7 @@ def create_train_env(world, stage, action_type, record_path=None):
         raise ValueError
 
     env = JoypadSpace(env, actions)
-    env = CustomReward(env, monitor)
+    env = CustomReward(env, monitor=None)
     env = SkipFrame(env, skip=4)
 
     return env, env.observation_space.shape, len(actions)

@@ -1,10 +1,12 @@
-import torch
-import random, numpy as np
+import random
+from collections import deque
 from pathlib import Path
 
-from src.optimizer import GlobalAdam
-from src.model import DDQN
-from collections import deque
+import numpy as np
+import torch
+
+from model import DDQN
+from optimizer import GlobalAdam
 
 
 class Mario:
@@ -32,7 +34,7 @@ class Mario:
 
         self.net = DDQN(self.state_dim, self.action_dim).float()
         if self.use_cuda:
-            self.net = self.net.to(device='cuda')
+            self.net = self.net.to(device="cuda")
         if checkpoint:
             self.load(checkpoint)
 
@@ -47,9 +49,13 @@ class Mario:
 
         # Exploitation
         else:
-            state = torch.FloatTensor(state).cuda() if self.use_cuda else torch.FloatTensor(state)
+            state = (
+                torch.FloatTensor(state).cuda()
+                if self.use_cuda
+                else torch.FloatTensor(state)
+            )
             state = state.unsqueeze(0)
-            action_values = self.net(state, model='online')
+            action_values = self.net(state, model="online")
             action_idx = torch.argmax(action_values, axis=1).item()
 
         # decrease epsilon
@@ -61,13 +67,41 @@ class Mario:
         return action_idx
 
     def save_into_replay_buffer(self, state, next_state, action, reward, done):
-        state = torch.FloatTensor(state).cuda() if self.use_cuda else torch.FloatTensor(state)
-        next_state = torch.FloatTensor(next_state).cuda() if self.use_cuda else torch.FloatTensor(next_state)
-        action = torch.LongTensor([action]).cuda() if self.use_cuda else torch.LongTensor([action])
-        reward = torch.DoubleTensor([reward]).cuda() if self.use_cuda else torch.DoubleTensor([reward])
-        done = torch.BoolTensor([done]).cuda() if self.use_cuda else torch.BoolTensor([done])
+        state = (
+            torch.FloatTensor(state).cuda()
+            if self.use_cuda
+            else torch.FloatTensor(state)
+        )
+        next_state = (
+            torch.FloatTensor(next_state).cuda()
+            if self.use_cuda
+            else torch.FloatTensor(next_state)
+        )
+        action = (
+            torch.LongTensor([action]).cuda()
+            if self.use_cuda
+            else torch.LongTensor([action])
+        )
+        reward = (
+            torch.DoubleTensor([reward]).cuda()
+            if self.use_cuda
+            else torch.DoubleTensor([reward])
+        )
+        done = (
+            torch.BoolTensor([done]).cuda()
+            if self.use_cuda
+            else torch.BoolTensor([done])
+        )
 
-        self.buffer.append((state, next_state, action, reward, done,))
+        self.buffer.append(
+            (
+                state,
+                next_state,
+                action,
+                reward,
+                done,
+            )
+        )
 
     def sample_from_replay_buffer(self):
         batch = random.sample(self.buffer, self.batch_size)
@@ -75,14 +109,18 @@ class Mario:
         return state, next_state, action.squeeze(), reward.squeeze(), done.squeeze()
 
     def td_estimate(self, state, action):
-        current_Q = self.net(state, model='online')[np.arange(0, self.batch_size), action]  # Q_online(s,a)
+        current_Q = self.net(state, model="online")[
+            np.arange(0, self.batch_size), action
+        ]  # Q_online(s,a)
         return current_Q
 
     @torch.no_grad()
     def td_target(self, reward, next_state, done):
-        next_state_Q = self.net(next_state, model='online')
+        next_state_Q = self.net(next_state, model="online")
         best_action = torch.argmax(next_state_Q, axis=1)
-        next_Q = self.net(next_state, model='target')[np.arange(0, self.batch_size), best_action]
+        next_Q = self.net(next_state, model="target")[
+            np.arange(0, self.batch_size), best_action
+        ]
         return (reward + (1 - done.float()) * self.gamma * next_Q).float()
 
     def update_Q_online(self, td_estimate, td_target):
@@ -123,23 +161,19 @@ class Mario:
         return (td_est.mean().item(), loss)
 
     def save(self):
-        save_path = self.save_dir / f"mario_net_{int(self.curr_step // self.save_every)}.chkpt"
-        torch.save(
-            dict(
-                model=self.net.state_dict(),
-                epsilon=self.epsilon
-            ),
-            save_path
+        save_path = (
+            self.save_dir / f"mario_net_{int(self.curr_step // self.save_every)}.chkpt"
         )
+        torch.save(dict(model=self.net.state_dict(), epsilon=self.epsilon), save_path)
         print(f"MarioNet saved to {save_path} at step {self.curr_step}")
 
     def load(self, load_path):
         if not load_path.exists():
             raise ValueError(f"{load_path} does not exist")
 
-        ckp = torch.load(load_path, map_location=('cuda' if self.use_cuda else 'cpu'))
-        epsilon = ckp.get('epsilon')
-        state_dict = ckp.get('model')
+        ckp = torch.load(load_path, map_location=("cuda" if self.use_cuda else "cpu"))
+        epsilon = ckp.get("epsilon")
+        state_dict = ckp.get("model")
 
         print(f"Loading model at {load_path} with exploration rate {epsilon}")
         self.net.load_state_dict(state_dict)

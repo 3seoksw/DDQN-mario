@@ -17,7 +17,7 @@ def process_frame(frame):
 
 
 class CustomReward(Wrapper):
-    def __init__(self, env, monitor):
+    def __init__(self, env, monitor=None):
         super().__init__(env)
         self.observation_space = Box(low=0, high=255, shape=(1, 84, 84))
         self.cur_score = 0

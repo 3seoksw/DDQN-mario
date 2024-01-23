@@ -1,4 +1,6 @@
 import argparse
+import os
+from pathlib import Path
 
 import torch
 
@@ -12,14 +14,16 @@ def parse_args():
     parser.add_argument("--stage", type=int, default=1)
     parser.add_argument("--action_type", type=str, default="SIMPLE")
     parser.add_argument("--lr", type=float, default=0.00025)
-    parser.add_argument("--checkpoint", type=str, default="")
+    parser.add_argument(
+        "--checkpoint", type=str, default="2024-01-22T18-45-03/mario_net_3"
+    )
 
     args = parser.parse_args()
     return args
 
 
 def test(args):
-    record_path = f"videos/mario_{args.world}_{args.stage}.mp4"
+    record_path = f"../videos/mario_{args.world}_{args.stage}.mp4"
     checkpoint = Path(f"checkpoints/{args.checkpoint}.chkpt")
 
     env, state_dim, num_actions = create_train_env(
@@ -55,6 +59,7 @@ def test(args):
             break
 
     print(f"{args.world}-{args.stage} Completed")
+    os.listdir("../videos")
 
 
 if __name__ == "__main__":

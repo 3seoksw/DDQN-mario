@@ -17,14 +17,22 @@ def process_frame(frame):
 
 
 class CustomReward(Wrapper):
-    def __init__(self, env):
+    def __init__(self, env, monitor):
         super().__init__(env)
         self.observation_space = Box(low=0, high=255, shape=(1, 84, 84))
         self.cur_score = 0
 
+        if monitor:
+            self.monitor = monitor
+        else:
+            self.monitor = None
+
     def step(self, action):
         state, reward, done, info = self.env.step(action)
         trunc = None
+
+        if self.monitor:
+            self.monitor.record(state)
 
         state = process_frame(state)
         reward += (info["score"] - self.cur_score) / 50

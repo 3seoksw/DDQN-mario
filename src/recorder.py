@@ -29,5 +29,5 @@ class Monitor:
         except FileNotFoundError:
             pass
 
-        def record(self, image_array):
-            self.pipe.stdin.wrtie(image_array.tostring())
+    def record(self, image_array):
+        self.pipe.stdin.write(image_array.tostring())

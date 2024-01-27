@@ -1,9 +1,12 @@
-import argparse, datetime
-import torch
+import argparse
+import datetime
 from pathlib import Path
-from src.logger import Logger
-from src.env import create_train_env
-from src.agent import Mario
+
+import torch
+
+from agent import Mario
+from env import create_train_env
+from logger import Logger
 
 
 def parse_args():
@@ -21,13 +24,23 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    env, state_dim, num_actions = create_train_env(args.world, args.stage, args.action_type)
+    env, state_dim, num_actions = create_train_env(
+        args.world, args.stage, args.action_type
+    )
 
-    save_dir = Path('checkpoints') / datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
+    save_dir = Path("checkpoints") / datetime.datetime.now().strftime(
+        "%Y-%m-%dT%H-%M-%S"
+    )
     save_dir.mkdir(parents=True)
     checkpoint = None
 
-    agent = Mario(state_dim=state_dim, action_dim=num_actions, lr=args.lr, save_dir=save_dir, checkpoint=checkpoint)
+    agent = Mario(
+        state_dim=state_dim,
+        action_dim=num_actions,
+        lr=args.lr,
+        save_dir=save_dir,
+        checkpoint=checkpoint,
+    )
     logger = Logger(save_dir)
 
     for e in range(args.num_episodes):
@@ -50,14 +63,10 @@ if __name__ == "__main__":
 
             state = next_state
 
-            if done or info['flag_get']:
+            if done or info["flag_get"]:
                 break
 
         logger.log_episode()
 
         if e % 20 == 0:
-            logger.record(
-                episode=e,
-                epsilon=agent.epsilon,
-                step=agent.curr_step
-            )
+            logger.record(episode=e, epsilon=agent.epsilon, step=agent.curr_step)

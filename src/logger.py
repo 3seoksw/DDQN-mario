@@ -1,9 +1,11 @@
-import numpy as np
-import time, datetime
+import datetime
+import time
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-class Logger():
+class Logger:
     def __init__(self, save_dir):
         self.save_log = save_dir / "log"
         with open(self.save_log, "w") as f:
@@ -100,6 +102,8 @@ class Logger():
             )
 
         for metric in ["ep_rewards", "ep_lengths", "ep_avg_losses", "ep_avg_qs"]:
+            plt.xlabel("Episode")
+            plt.ylabel(metric)
             plt.plot(getattr(self, f"moving_avg_{metric}"))
             plt.savefig(getattr(self, f"{metric}_plot"))
             plt.clf()

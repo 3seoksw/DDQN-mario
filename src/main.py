@@ -45,9 +45,10 @@ if __name__ == "__main__":
 
     # for e in range(args.num_episodes):
     num_episodes = 0
-    flag = False
+    flag_count = 0
+    completed = False
     while True:
-        if flag:
+        if completed:
             break
 
         e = num_episodes
@@ -72,9 +73,14 @@ if __name__ == "__main__":
             state = next_state
 
             if done or info["flag_get"]:
+                flag_count += 1
+                print(f"Flag reached at episode {e}")
                 if info["flag_get"]:
-                    logger.record(episode=e, epsilon=agent.epsilon, step=agent.curr_step)
-                    flag = True
+                    logger.record(
+                        episode=e, epsilon=agent.epsilon, step=agent.curr_step
+                    )
+                    agent.save()
+                    completed = True
                 break
 
         logger.log_episode()
@@ -83,3 +89,4 @@ if __name__ == "__main__":
             logger.record(episode=e, epsilon=agent.epsilon, step=agent.curr_step)
 
         num_episodes += 1
+    print(f"Number of episodes reached to the flag: {flag_count}")

@@ -17,7 +17,7 @@ class Mario:
         self.batch_size = 32
 
         self.epsilon = 1
-        self.epsilon_decay = 0.99999975
+        self.epsilon_decay = 0.9999975
         self.epsilon_min = 0.1
         self.gamma = 0.9
         self.lr = lr
@@ -39,7 +39,6 @@ class Mario:
             self.load(checkpoint)
 
         self.optimizer = GlobalAdam(self.net.parameters(), lr=self.lr)
-        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.lr)
         self.loss_fn = torch.nn.SmoothL1Loss()
 
     def act(self, state):

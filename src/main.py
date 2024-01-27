@@ -43,7 +43,15 @@ if __name__ == "__main__":
     )
     logger = Logger(save_dir)
 
-    for e in range(args.num_episodes):
+    # for e in range(args.num_episodes):
+    num_episodes = 0
+    flag = False
+    while True:
+        if flag:
+            break
+
+        e = num_episodes
+
         state, info = env.reset()
         state = torch.from_numpy(state).float()
 
@@ -64,9 +72,14 @@ if __name__ == "__main__":
             state = next_state
 
             if done or info["flag_get"]:
+                if info["flag_get"]:
+                    logger.record(episode=e, epsilon=agent.epsilon, step=agent.curr_step)
+                    flag = True
                 break
 
         logger.log_episode()
 
         if e % 20 == 0:
             logger.record(episode=e, epsilon=agent.epsilon, step=agent.curr_step)
+
+        num_episodes += 1

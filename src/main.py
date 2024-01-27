@@ -73,9 +73,9 @@ if __name__ == "__main__":
             state = next_state
 
             if done or info["flag_get"]:
-                flag_count += 1
-                print(f"Flag reached at episode {e}")
                 if info["flag_get"]:
+                    flag_count += 1
+                    print(f"Flag reached at episode {e}")
                     logger.record(
                         episode=e, epsilon=agent.epsilon, step=agent.curr_step
                     )

@@ -1,8 +1,13 @@
 import datetime
 import time
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+is_ipython = "inline" in matplotlib.get_backend()
+if is_ipython:
+    from IPython import display
 
 
 class Logger:
@@ -37,6 +42,13 @@ class Logger:
         # Timing
         self.record_time = time.time()
 
+    def init_episode(self):
+        self.curr_ep_reward = 0.0
+        self.curr_ep_length = 0
+        self.curr_ep_loss = 0.0
+        self.curr_ep_q = 0.0
+        self.curr_ep_loss_length = 0
+
     def log_step(self, reward, loss, q):
         self.curr_ep_reward += reward
         self.curr_ep_length += 1
@@ -46,7 +58,6 @@ class Logger:
             self.curr_ep_loss_length += 1
 
     def log_episode(self):
-        "Mark end of episode"
         self.ep_rewards.append(self.curr_ep_reward)
         self.ep_lengths.append(self.curr_ep_length)
         if self.curr_ep_loss_length == 0:
@@ -59,13 +70,6 @@ class Logger:
         self.ep_avg_qs.append(ep_avg_q)
 
         self.init_episode()
-
-    def init_episode(self):
-        self.curr_ep_reward = 0.0
-        self.curr_ep_length = 0
-        self.curr_ep_loss = 0.0
-        self.curr_ep_q = 0.0
-        self.curr_ep_loss_length = 0
 
     def record(self, episode, epsilon, step):
         mean_ep_reward = np.round(np.mean(self.ep_rewards[-100:]), 3)
@@ -101,9 +105,16 @@ class Logger:
                 f"{datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'):>20}\n"
             )
 
-        for metric in ["ep_rewards", "ep_lengths", "ep_avg_losses", "ep_avg_qs"]:
-            plt.xlabel("Episode")
+        n = 0
+        colours = ["red", "blue", "green", "brown"]
+        metrics = ["ep_rewards", "ep_lengths", "ep_avg_losses", "ep_avg_qs"]
+        for metric, colour in zip(metrics, colours):
+            n += 1
+            plt.figure(n)
+            plt.xlabel("Episode x 20")
             plt.ylabel(metric)
-            plt.plot(getattr(self, f"moving_avg_{metric}"))
+            plt.plot(getattr(self, f"moving_avg_{metric}"), color=colour)
             plt.savefig(getattr(self, f"{metric}_plot"))
-            plt.clf()
+            plt.pause(0.001)  # pause a bit so that plots are updated
+            if is_ipython:
+                display.display(plt.gcf())

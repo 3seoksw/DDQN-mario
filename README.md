@@ -1,6 +1,6 @@
 # Double DQN: Super Mario Bros.
 
-This project is built based on the paper regarding <b>Double DQN</b>[[1]](#1)
+This project is built based on the paper regarding <b>Double DQN</b> [[1]](#1)
 and official **PyTorch** website [[2]](#2).<br>
 The main motivation and purpose of building this project was to enhance the better understanding of how reinforcement learning works on practice through code.
 Here, the code applies DDQN which is quite similar to DQN [[3]](#3).
@@ -122,6 +122,31 @@ where $\theta^{-}$ is a vector parameters of target network. And the Double $Q$-
 ```
 
 where $\theta$ is parameterizing online network.
+
+## Experiment Results
+
+<table>
+    <tr>
+        <td>
+            <img src="plots/length_plot.jpg">
+            <div align="center">Time consumed per episode</div>
+        </td>
+        <td>
+            <img src="plots/loss_plot.jpg">
+            <div align="center">Decreasing losses of TD-error</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img src="plots/reward_plot.jpg">
+            <div align="center">Increasing cumulative rewards</div>
+        </td>
+        <td>
+            <img src="plots/q_plot.jpg">
+            <div align="center">Increasing average Q-values</div>
+        </td>
+    </tr>
+</table>
 
 ## References
 

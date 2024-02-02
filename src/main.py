@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--world", type=int, default=1)
     parser.add_argument("--stage", type=int, default=1)
     parser.add_argument("--action_type", type=str, default="SIMPLE")
-    parser.add_argument("--num_episodes", type=int, default=4000)
+    parser.add_argument("--num_episodes", type=int, default=12000)
     parser.add_argument("--lr", type=float, default=0.00025)
 
     args = parser.parse_args()
@@ -43,16 +43,9 @@ if __name__ == "__main__":
     )
     logger = Logger(save_dir)
 
-    # for e in range(args.num_episodes):
     num_episodes = 0
     flag_count = 0
-    completed = False
-    while True:
-        if completed:
-            break
-
-        e = num_episodes
-
+    for e in range(args.num_episodes):
         state, info = env.reset()
         state = torch.from_numpy(state).float()
 
@@ -80,7 +73,6 @@ if __name__ == "__main__":
                         episode=e, epsilon=agent.epsilon, step=agent.curr_step
                     )
                     agent.save()
-                    completed = True
                 break
 
         logger.log_episode()

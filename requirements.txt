@@ -1,6 +1,8 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: osx-arm64
+# python=3.11.7
+# pip=23.3.2
 blas=1.0=openblas
 brotli=1.0.9=h1a28f6b_7
 brotli-bin=1.0.9=h1a28f6b_7

@@ -13,8 +13,8 @@ def parse_args():
     parser = argparse.ArgumentParser("""A3C Implementation""")
     parser.add_argument("--world", type=int, default=1)
     parser.add_argument("--stage", type=int, default=1)
-    parser.add_argument("--action_type", type=str, default="SIMPLE")
-    parser.add_argument("--num_episodes", type=int, default=12000)
+    parser.add_argument("--action_type", type=str, default="COMPLEX")
+    parser.add_argument("--num_episodes", type=int, default=16000)
     parser.add_argument("--lr", type=float, default=0.00025)
 
     args = parser.parse_args()

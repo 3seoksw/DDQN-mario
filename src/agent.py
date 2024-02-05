@@ -23,7 +23,7 @@ class Mario:
         self.lr = lr
 
         self.curr_step = 0
-        self.burnin = 1e5
+        self.burnin = 1e6
         self.learn_every = 3
         self.sync_every = 1e4
 

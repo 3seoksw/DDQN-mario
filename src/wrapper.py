@@ -21,6 +21,9 @@ class CustomReward(Wrapper):
         super().__init__(env)
         self.observation_space = Box(low=0, high=255, shape=(1, 84, 84))
         self.cur_score = 0
+        self.status_dic = {"small": 0, "tall": 1, "fireball": 2}
+        self.prev_status = self.status_dic["small"]
+        self.cur_status = self.status_dic["small"]
 
         if monitor:
             self.monitor = monitor
@@ -28,7 +31,9 @@ class CustomReward(Wrapper):
             self.monitor = None
 
     def step(self, action):
+        self.prev_status = self.cur_status
         state, reward, done, info = self.env.step(action)
+        self.cur_status = self.status_dic[info["status"]]
         trunc = None
 
         if self.monitor:
@@ -37,6 +42,8 @@ class CustomReward(Wrapper):
         state = process_frame(state)
         reward += (info["score"] - self.cur_score) / 50
         self.cur_score = info["score"]
+
+        reward += (self.cur_status - self.prev_status) * 10
 
         if done:
             if info["flag_get"]:

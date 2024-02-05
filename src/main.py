@@ -10,7 +10,7 @@ from logger import Logger
 
 
 def parse_args():
-    parser = argparse.ArgumentParser("""A3C Implementation""")
+    parser = argparse.ArgumentParser("""DDQN Implementation""")
     parser.add_argument("--world", type=int, default=1)
     parser.add_argument("--stage", type=int, default=1)
     parser.add_argument("--action_type", type=str, default="COMPLEX")

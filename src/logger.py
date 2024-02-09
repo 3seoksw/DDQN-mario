@@ -5,10 +5,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-is_ipython = "inline" in matplotlib.get_backend()
-if is_ipython:
-    from IPython import display
-
 
 class Logger:
     def __init__(self, save_dir):
@@ -115,6 +111,4 @@ class Logger:
             plt.ylabel(metric)
             plt.plot(getattr(self, f"moving_avg_{metric}"), color=colour)
             plt.savefig(getattr(self, f"{metric}_plot"))
-            plt.pause(0.001)  # pause a bit so that plots are updated
-            if is_ipython:
-                display.display(plt.gcf())
+            plt.clf()
